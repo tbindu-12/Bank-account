@@ -1,64 +1,81 @@
 class Book:
-    def _init_(self, title, author):
+    def _init_(self, book_id, title, author, is_available=True):
+        self.book_id = book_id
         self.title = title
         self.author = author
-        self.is_available = True
+        self.is_available = is_available
 
-    def borrow_book(self):
-        if self.is_available:
-            self.is_available = False
-            print(f"Book borrowed successfully: {self.title}")
-        else:
-            print("Sorry, the book is not available.")
-
-    def return_book(self):
-        self.is_available = True
-        print(f"Book returned successfully: {self.title}")
+    def _str_(self):
+        return f"Book ID: {self.book_id}, Title: {self.title}, Author: {self.author}, Available: {self.is_available}"
 
 
 class Library:
     def _init_(self):
         self.books = []
+        self.members = []
 
     def add_book(self, book):
         self.books.append(book)
 
-    def display_available_books(self):
-        print("Available Books:")
-        for book in self.books:
-            if book.is_available:
-                print(f"{book.title} by {book.author}")
+    def add_member(self, member):
+        self.members.append(member)
 
-    def find_book(self, title):
+    def display_books(self):
         for book in self.books:
-            if book.title.lower() == title.lower():
-                return book
-        return None
+            print(book)
+
+    def display_members(self):
+        for member in self.members:
+            print(member)
 
 
 class Member:
-    def _init_(self, name):
+    def _init_(self, member_id, name, is_subscribed=False):
+        self.member_id = member_id
         self.name = name
+        self.is_subscribed = is_subscribed
+
+    def _str_(self):
+        return f"Member ID: {self.member_id}, Name: {self.name}, Subscribed: {self.is_subscribed}"
+
+    def borrow_book(self, book):
+        if book.is_available:
+            print(f"{self.name} borrowed {book.title}.")
+            book.is_available = False
+        else:
+            print(f"Sorry, {book.title} is not available for borrowing.")
+
+    def return_book(self, book):
+        print(f"{self.name} returned {book.title}.")
+        book.is_available = True
 
 
+# Example Usage
 if _name_ == "_main_":
-    book1 = Book("The Catcher in the Rye", "J.D. Salinger")
-    book2 = Book("To Kill a Mockingbird", "Harper Lee")
-
+    book1 = Book(1, "A", "author1")
+    book2 = Book(2, "B", "author2")
+    book3 = Book(3, "C", "author3")
+    member1 = Member(101, "ABC", True)
+    member2 = Member(102, "XYZ", False)
     library = Library()
     library.add_book(book1)
     library.add_book(book2)
+    library.add_book(book3)
+    library.add_member(member1)
+    library.add_member(member2)
 
-    member = Member("John Doe")
+    print("Books in Library:")
+    library.display_books()
 
-    library.display_available_books()
+    print("\nMembers in Library:")
+    library.display_members()
 
-    borrowed_book = library.find_book("To Kill a Mockingbird")
-    if borrowed_book:
-        borrowed_book.borrow_book()
+    member1.borrow_book(book1)
+    member2.borrow_book(book2)
 
-    library.display_available_books()
+    member1.return_book(book1)
+    member2.return_book(book2)
 
-    borrowed_book = library.find_book("To Kill a Mockingbird")
-    if borrowed_book:
-        borrowed_book.return_book()
+    # Displaying Books after transactions
+    print("\nBooks in Library after transactions:")
+    library.display_books()
